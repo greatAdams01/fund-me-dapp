@@ -1,12 +1,46 @@
 <script setup>
-// This starter template is using Vue 3 <script setup> SFCs
-// Check out https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup
-import HelloWorld from './components/HelloWorld.vue'
+import { reactive } from  'vue'
+import Moralis from 'moralis'
+
+const appId  = import.meta.env.VITE_MORALIS_SERVER_ID
+const serverUrl = import.meta.env.VITE_MORALIS_SERVER_URL
+
+Moralis.start({ serverUrl, appId  })
+
+
+const state = reactive({ count: 0, userAuth: '' })
+
+const login = async () => {
+  let user = Moralis.User.current();
+ if(!user) {
+   user = await Moralis.authenticate()
+    .then((user) => {
+      console.log("logged in user:", user);
+      console.log(user.get("ethAddress"));
+      state.userAuth = user.get('ethAddress')
+    })
+    .catch((error) => {
+      console.log(error)
+    })
+ } 
+}
+
+const logOut = async () => {
+  await Moralis.User.logOut();
+  state.userAuth = ''
+}
+
 </script>
 
 <template>
-  <img alt="Vue logo" src="./assets/logo.png" />
-  <HelloWorld msg="Hello Vue 3 + Vite" />
+<div>
+  <div class="container text-center">
+    <h2>{{ state.userAuth ? `Welcome ${state.userAuth}` : 'Please login' }}</h2>
+    <button @click="login" class="btn btn-primary mr-5">Authenticate</button><br>
+    <div class="p-4"></div>
+    <button @click="logOut" class="btn btn-primary">Logout</button>
+  </div>
+</div>
 </template>
 
 <style>
