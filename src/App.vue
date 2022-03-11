@@ -1,12 +1,8 @@
 <script setup>
-import { reactive } from  'vue'
+import { reactive, onMounted } from  'vue'
 import Moralis from 'moralis'
 
-const appId  = import.meta.env.VITE_MORALIS_SERVER_ID
-const serverUrl = import.meta.env.VITE_MORALIS_SERVER_URL
-
-Moralis.start({ serverUrl, appId  })
-
+import { contractAddress, contractABI } from './contract/constants.js'
 
 const state = reactive({ count: 0, userAuth: '' })
 
@@ -29,6 +25,24 @@ const logOut = async () => {
   await Moralis.User.logOut();
   state.userAuth = ''
 }
+
+const initWeb3 = async () => {
+  try {
+    window.web3 = await Moralis.enable();
+    let contract_instance = new web3.eth.Contract(
+      contractABI,
+      contractAddress
+    );
+
+  console.log(contract_instance)
+  } catch (error) {
+   console.log(error) 
+  }
+}
+
+onMounted(() => {
+  initWeb3()
+})
 
 </script>
 

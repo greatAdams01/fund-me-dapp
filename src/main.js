@@ -1,4 +1,6 @@
 import { createApp } from 'vue'
 import App from './App.vue'
 
-createApp(App).mount('#app')
+import Moralis from './plugins/moralis.js'
+
+createApp(App).use(Moralis).mount('#app')
