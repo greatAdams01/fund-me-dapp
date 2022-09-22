@@ -1,10 +1,12 @@
 <script setup>
-import { reactive, onMounted } from  'vue'
+import { reactive, onMounted, inject } from  'vue'
 import Moralis from 'moralis'
 
 import { contractAddress, contractABI } from './contract/constants.js'
 
 const state = reactive({ count: 0, userAuth: '' })
+
+const consoleOut = inject('consoleout')
 
 const login = async () => {
   let user = Moralis.User.current();
@@ -53,6 +55,7 @@ onMounted(() => {
     <button @click="login" class="btn btn-primary mr-5">Authenticate</button><br>
     <div class="p-4"></div>
     <button @click="logOut" class="btn btn-primary">Logout</button>
+    <button @click="consoleOut" class="btn btn-primary">consoleOut</button>
   </div>
 </div>
 </template>
